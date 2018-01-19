@@ -32,6 +32,8 @@ Run the daemon it as
 
 `node index.js --servers http://1.2.3.4:8080,http://1.2.3.4:8081 --basic admin:123 [--minLevel=#] [--action=#] [--interval=timeIn_ms]`
 
+Of course replace `admin:123` with your own pair `login:password` of you web admin panel
+
 minLevel defaults to `15`
 
 action defaults to `kick`, available options: `kick`, `sessionban`, `banip`, `banid`, `mutevoice` and `unmutevoice`
