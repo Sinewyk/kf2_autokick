@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "superagent": "^3.8.2"
+    "superagent": "^3.8.2",
+    "x-ray": "https://github.com/matthewmueller/x-ray",
+    "yargs": "^10.1.1"
   }
 }
