@@ -68,6 +68,12 @@ Node 8+ (async, await)
 
 Cli configuration for perks
 
+Commander for --help and such
+
 # Tech TODOS
+
 Clean server argument passing, try forEach over for loops (did for loops because async/await)
-Clean global state (immutable over mutation)
+
+Clean global state (immutable over mutation, redux ?)
+
+Maybe most + scan + proxy & shit
