@@ -30,7 +30,7 @@ Find the file `current_player_row.inc` in your Killing Floor 2 web admin folder 
 # Run
 Run the daemon it as
 
-`node --servers http://1.2.3.4:8080,http://1.2.3.4:8081 --basic admin:123 [--minLevel=#] [--action=#] [--interval=timeIn_ms] index.js`
+`node index.js --servers http://1.2.3.4:8080,http://1.2.3.4:8081 --basic admin:123 [--minLevel=#] [--action=#] [--interval=timeIn_ms]`
 
 minLevel defaults to `15`
 
