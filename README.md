@@ -4,9 +4,7 @@ Install [nodejs](https://nodejs.org)
 
 Install [yarn](https://yarnpkg.com)
 
-Get the code
-
-Install dependencies: `yarn --frozen-lockfile`
+Git clone this repo, go into it and run `yarn --frozen-lockfile` to install javascript dependencies
 
 Killing floor 2 server edits:
   - Activate http basic auth on your killing floor 2 web admin panel
