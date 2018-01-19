@@ -1,3 +1,17 @@
+# Why ?
+
+No mutators on your Killing Floor 2 server, it stays ranked and everyone can still gain xp on it.
+
+This is just like a robot that is using your web admin panel to manage your server automatically by doing stuff (kicking) to people according level and perks (die survivalists !)
+
+# Disclaimer
+
+You should really serve your web admin panel over https to not have issues with sending your passwords unencrypted over the net ... but that's another issue.
+
+Either way, you were vulnerable before, you still are now if over http.
+
+I'm not responsible for any issues arising from using this bot.
+
 # Install
 
 Install [nodejs](https://nodejs.org)
