@@ -16,11 +16,10 @@ const SURVIVALIST = ['Survivant', 'Survivalist'];
 const INTERVAL = argv.interval || 15000;
 const WARNING_MODE = argv.warning === undefined ? true : false;
 const WARNING_MESSAGE = argv.warningMessage || 'No Survivalist, no perks under level 15 : change or kick is imminent !';
-
+const MIN_LEVEL = argv.minLevel ? parseInt(argv.minLevel, 10) : 15;
 const rolesToForbid = [
   ...SURVIVALIST
 ];
-const MIN_LEVEL = argv.minLevel || 15;
 
 const action = (server, playerkey) => {
   request
@@ -106,7 +105,8 @@ async function check() {
         const temp = x.split(';');
         return {
           perk: temp[0],
-          level: parseInt(temp[1], 10),
+          // if there's no perk yet, user is still loading, mark level as 26 so that no warnings can be issued ... yet torwards level
+          level: temp[0] === '' ? 99 : parseInt(temp[1], 10),
           playerkey: temp[2],
         }
       });
