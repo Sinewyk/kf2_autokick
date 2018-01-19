@@ -2,6 +2,7 @@ const assert = require('assert');
 const argv = require('yargs').argv;
 const request = require('superagent');
 const x = require('x-ray')();
+const debug = require('debug')('kf2autokick');
 
 assert(argv.basic, `You need a basic argument in the form 'login:password'`);
 assert(argv.servers, `You need to send a list of servers in the form 'http://0.1.2.3:4444,http://5.6.7.8:9999'`);
@@ -20,13 +21,17 @@ const rolesToForbid = [
 ];
 const MIN_LEVEL = argv.minLevel || 15;
 
-const action = (server, playerkey) => request
+const action = (server, playerkey) => {
+  request
   .post(`${server}/ServerAdmin/current/players+data`)
   .set('Authorization', basicAuthValue)
   .send('ajax=1')
   .send(`action=${ACTION}`)
   .send(`playerkey=${playerkey}`)
   .then();
+
+  debug(`${playerkey}: ${ACTION} on ${server}`);
+}
 
 const adminSays = (server, text) => request
   .post(`${server}/ServerAdmin/current/chat+frame+data`)
@@ -65,23 +70,20 @@ const cleanState = (server, players) => {
 // Mark a player as needing to be warned
 const warnPlayer = (server, playerkey) => {
   globalState[server][playerkey] = true;
+  debug(`${playerkey}: warn on ${server}`);
 }
 
 // Mark a player as not needing to be warned
 const unwarnPlayer = (server, playerkey) => {
+  if (globalState[server][playerkey]) {
+    debug(`${playerkey}: unwarn on ${server}`);
+  }
   delete globalState[server][playerkey];
 }
 
 // Is this a first offense ?
 const firstOffense = (server, playerkey) => {
   return globalState[server][playerkey] == null;
-}
-
-const actionAndWarn = (server, playerkey) => {
-  action(server, playerkey);
-  if (WARNING) {
-    warnPlayer(server, playerkey);
-  }
 }
 
 async function check() {
@@ -119,7 +121,7 @@ async function check() {
           if (WARNING && firstOffense(server, player.playerkey)) {
             warnPlayer(server, player.playerkey);
           } else {
-            actionAndWarn(server, player.playerkey);
+            action(server, player.playerkey);
           }
           continue;
         }
@@ -129,7 +131,7 @@ async function check() {
           if (WARNING && firstOffense(server, player.playerkey)) {
             warnPlayer(server, player.playerkey);
           } else {
-            actionAndWarn(server, player.playerkey);
+            action(server, player.playerkey);
           }
           continue;
         }
