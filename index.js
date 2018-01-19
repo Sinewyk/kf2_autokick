@@ -14,7 +14,8 @@ const basicAuthValue = `Basic ${Buffer.from(argv.basic).toString('base64')}`;
 const ACTION = argv.action || 'kick';
 const SURVIVALIST = ['Survivant', 'Survivalist'];
 const INTERVAL = argv.interval || 15000;
-const WARNING = argv.warning === undefined ? true : false;
+const WARNING_MODE = argv.warning === undefined ? true : false;
+const WARNING_MESSAGE = argv.warningMessage || 'No Survivalist, no perks under level 15 : change or kick is imminent !';
 
 const rolesToForbid = [
   ...SURVIVALIST
@@ -118,7 +119,7 @@ async function check() {
         
         // Forbid some roles
         if (rolesToForbid.indexOf(player.perk) !== -1) {
-          if (WARNING && firstOffense(server, player.playerkey)) {
+          if (WARNING_MODE && firstOffense(server, player.playerkey)) {
             warnPlayer(server, player.playerkey);
           } else {
             action(server, player.playerkey);
@@ -128,7 +129,7 @@ async function check() {
 
         // Forbid too low levels
         if (player.level < MIN_LEVEL) {
-          if (WARNING && firstOffense(server, player.playerkey)) {
+          if (WARNING_MODE && firstOffense(server, player.playerkey)) {
             warnPlayer(server, player.playerkey);
           } else {
             action(server, player.playerkey);
@@ -141,7 +142,7 @@ async function check() {
 
       // Warnings to issue ? Just issue one globally
       if (Object.keys(globalState[server]).length > 0) {
-        await adminSays(server, 'No Survivalist, no perks under level 15 : change or kick is imminent !');
+        await adminSays(server, WARNING_MESSAGE);
       }
     } catch (e) {
       console.error(e);
