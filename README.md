@@ -30,7 +30,7 @@ Find the file `current_player_row.inc` in your Killing Floor 2 web admin folder 
 # Run
 Run the daemon it as
 
-`node index.js --servers http://1.2.3.4:8080,http://1.2.3.4:8081 --basic admin:123 [--minLevel=#] [--action=#] [--interval=timeIn_ms]`
+`node index.js --servers http://1.2.3.4:8080,http://1.2.3.4:8081 --basic admin:123 [--no-warnings] [--minLevel=#] [--action=#] [--interval=timeIn_ms]`
 
 Of course replace `admin:123` with your own pair `login:password` of you web admin panel
 
@@ -38,10 +38,20 @@ minLevel defaults to `15`
 
 action defaults to `kick`, available options: `kick`, `sessionban`, `banip`, `banid`, `mutevoice` and `unmutevoice`
 
-interval defaults to `10000`
+interval defaults to `15000`
+
+`--no-warning`: by default we warn before doing the action ... use this option to not issue any warning before doing your action
 
 Forbidden perk per default is Survivalist, I may later make it configurable
 
 # Requirements
 
 Node 8+ (async, await)
+
+# TODOS
+
+Cli configuration for perks
+
+# Tech TODOS
+Clean server argument passing, try forEach over for loops (did for loops because async/await)
+Clean global state (immutable over mutation)
