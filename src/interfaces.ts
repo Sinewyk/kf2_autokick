@@ -1,6 +1,10 @@
 // Ideally I would only support english, but I'm French
 // so some of my friends server are installed in French
-const PERKS = {
+interface PERKS_Interface {
+  [key: string]: string[]
+}
+
+const PERKS: PERKS_Interface = {
   Berserker: ['Berserker', 'Fou Furieux'],
   Survivalist: ['Survivalist', 'Survivant'],
   Commando: ['Commando'],

@@ -23,6 +23,20 @@ assert(
   `Invalid action, must be one of ${Object.values(ACTIONS)}`,
 )
 
+const removedPerks: string[] =
+  typeof argv.removedPerks !== 'undefined' ? argv.removedPerks.split(',') : []
+removedPerks.forEach(role =>
+  assert(
+    Object.keys(PERKS).indexOf(role) !== -1,
+    `Perk ${role} is invalid, valid values are: ${Object.keys(PERKS)}`,
+  ),
+)
+// This is basically some crude i18n support ... because web panel sends back already translated perks name
+const rolesToForbid = removedPerks.reduce<string[]>(
+  (acc, perkToRemove: string) => acc.concat(PERKS[perkToRemove]),
+  [],
+)
+
 const servers: string[] = argv.servers.split(',')
 
 const basicAuthValue = `Basic ${Buffer.from(argv.basic).toString('base64')}`
@@ -30,9 +44,8 @@ const INTERVAL = argv.interval ? parseInt(argv.interval) : 15000
 const WARNING_MODE = argv.warning === undefined ? true : false
 const WARNING_MESSAGE: string =
   argv.warningMessage ||
-  'No Survivalist, no perks under level 15 : change or kick is imminent !'
+  'No perks under level 15 : change or kick is imminent !'
 const MIN_LEVEL = argv.minLevel ? parseInt(argv.minLevel, 10) : 15
-const rolesToForbid = [...PERKS.Survivalist]
 
 const x = XRAY()
 

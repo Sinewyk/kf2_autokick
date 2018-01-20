@@ -21,6 +21,7 @@ Activate http basic auth on your killing floor 2 web admin panel
 ![image](https://user-images.githubusercontent.com/1826366/35134456-bd68cd68-fcd6-11e7-882b-3b8453a3a356.png)
 
 Find the file `current_player_row.inc` in your Killing Floor 2 web admin folder (should be around `Steam/SteamApps/common/KillingFloor2/KFGame/Web/ServerAdmin`) and replace its contents with
+
 ```
 <tr class="<%evenodd%>">
   <td style="background: <%player.teamcolor%>; color: <%player.teamcolor%>;"><%player.teamid%>&#160;</td>
@@ -33,34 +34,42 @@ Find the file `current_player_row.inc` in your Killing Floor 2 web admin folder 
   <td class="center"><%player.admin%></td>
 </tr>
 ```
+
 (I'm just editing to show perk level and playerkey, necessary for actions, in one page separated by `;` for quick parsing)
 
 # Run
+
 Run the daemon it as
 
-`node index.js --servers http://1.2.3.4:8080,http://1.2.3.4:8081 --basic admin:123 [--no-warnings] [--warning-message="Fix your shit or get kicked"] [--minLevel=#] [--action=#] [--interval=timeIn_ms]`
+`node lib/index.js --servers http://1.2.3.4:8080,http://1.2.3.4:8081 --basic admin:123 [--no-warnings] [--warning-message="Fix your shit or get kicked"] [--minLevel=#] [--action=#] [--interval=timeIn_ms] [--remove-perks="Survivalist,SWAT"]`
 
-Of course replace `admin:123` with your own pair `login:password` of you web admin panel
+### Mandatory parameters:
 
-minLevel defaults to `15`
+`--servers`: comma separated list of servers, pointing to the web admin panel
 
-action defaults to `kick`, available options: `kick`, `sessionban`, `banip`, `banid`, `mutevoice` and `unmutevoice`
+`--basic`: basic auth credentials in the format `login:password` of you web admin panel
 
-interval defaults to `15000`
+### Optional parameters:
+
+`--min-level`: defaults to `15`
+
+`--action`: defaults to `kick`. Available values: `kick`, `sessionban`, `banip`, `banid`, `mutevoice` and `unmutevoice`
+
+`--interval`: defaults to `15000`, in ms. How long between checks and actions
 
 `--no-warning`: by default we warn before doing the action ... use this option to not issue any warning before doing your action
 
-`--warning-message`: defaults to `No Survivalist, no perks under level 15 : change or kick is imminent !`, but send a default warning related to your config
+`--warning-message`: defaults to `No perks under level 15 : change or kick is imminent !`, but customize it related to the options you are sending
 
-Forbidden perk per default is Survivalist, I may later make it configurable
+`--remove-perks`: comma separated list of values ... possibles values are `Berserker`, `Survivalist`, `Commando`, `Support`, `FieldMedic`, `Demolitionist`, `Firebug`, `Gunslinger`, `Sharpshooter` and `SWAT`
+
+Example: `--remove-perks=Survivalist,Berserker`
 
 # Requirements
 
 Node 8+ (async, await)
 
 # TODOS
-
-Cli configuration for perks
 
 Commander for --help and such
 
