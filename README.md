@@ -73,6 +73,10 @@ Node 8+ (async, await)
 
 Commander for --help and such
 
+Autokick for people joining after a certain % of the game (it's kind of a dick move to join just for the boss, you may not have time to buy anything and basically be a dead weight).
+
+Autokick for people joining during a round without enough time to even go to the trader: if joining game with less than # seconds remaining of trader time and a class other than firebug and berserker, you get kicked. (# may be configured).
+
 # Tech TODOS
 
 Clean server argument passing, try forEach over for loops (did for loops because async/await)
