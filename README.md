@@ -61,6 +61,8 @@ Run the daemon it as
 
 `--warning-message`: defaults to `No perks under level 15 : change or kick is imminent !`, but customize it related to the options you are sending
 
+You cannot use special characters because the `Content-Type` of the POST is `application/x-www-form-urlencoded`, so `&` breaks the parsing server side ... [more info here](https://en.wikipedia.org/wiki/Percent-encoding#The_application/x-www-form-urlencoded_type)
+
 `--remove-perks`: comma separated list of values ... possibles values are `Berserker`, `Survivalist`, `Commando`, `Support`, `FieldMedic`, `Demolitionist`, `Firebug`, `Gunslinger`, `Sharpshooter` and `SWAT`
 
 Example: `--remove-perks=Survivalist,Berserker`
