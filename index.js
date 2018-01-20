@@ -13,7 +13,7 @@ const basicAuthValue = `Basic ${Buffer.from(argv.basic).toString('base64')}`;
 
 const ACTION = argv.action || 'kick';
 const SURVIVALIST = ['Survivant', 'Survivalist'];
-const INTERVAL = argv.interval || 15000;
+const INTERVAL = argv.interval ? parseInt(argv.interval) : 15000;
 const WARNING_MODE = argv.warning === undefined ? true : false;
 const WARNING_MESSAGE = argv.warningMessage || 'No Survivalist, no perks under level 15 : change or kick is imminent !';
 const MIN_LEVEL = argv.minLevel ? parseInt(argv.minLevel, 10) : 15;
