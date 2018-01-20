@@ -23,16 +23,16 @@ assert(
   `Invalid action, must be one of ${Object.values(ACTIONS)}`,
 )
 
-const removedPerks: string[] =
-  typeof argv.removedPerks !== 'undefined' ? argv.removedPerks.split(',') : []
-removedPerks.forEach(role =>
+const removePerks: string[] =
+  typeof argv.removePerks !== 'undefined' ? argv.removePerks.split(',') : []
+removePerks.forEach(role =>
   assert(
     Object.keys(PERKS).indexOf(role) !== -1,
     `Perk ${role} is invalid, valid values are: ${Object.keys(PERKS)}`,
   ),
 )
 // This is basically some crude i18n support ... because web panel sends back already translated perks name
-const rolesToForbid = removedPerks.reduce<string[]>(
+const rolesToForbid = removePerks.reduce<string[]>(
   (acc, perkToRemove: string) => acc.concat(PERKS[perkToRemove]),
   [],
 )
