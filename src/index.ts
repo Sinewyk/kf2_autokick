@@ -5,7 +5,15 @@ import * as _debug from 'debug'
 import defaultConfig from './defaultConfig'
 import { base64encode, validateConfigArgument, validateConfig } from './utils'
 import { adminSays, fetchInfos, action } from './api'
-import { GlobalState, PlayerInfos, PERKS, ConfigFile } from './interfaces'
+import {
+  GlobalState,
+  PlayerInfos,
+  PERKS,
+  ConfigFile,
+  ServerState,
+  InvalidRules,
+} from './interfaces'
+import { playerIsInvalid, hasBeenWarned, isWaitingToTakeAction } from './state'
 
 const debug = _debug('kf2autokick')
 
@@ -48,82 +56,87 @@ const extractPlayers = (html: string): Promise<PlayerInfos[]> =>
     }),
   )
 
-const globalState: GlobalState = {}
-
-// Clean players who aren't there anymore between two checks
-const cleanState = (server: string, players: PlayerInfos[]) => {
-  const previousState = globalState[server]
-  globalState[server] = {}
-  players.forEach(player => {
-    if (previousState[player.playerkey]) {
-      globalState[server][player.playerkey] = true
-    }
-  })
-}
-
-// Mark a player as needing to be warned
-const warnPlayer = (server: string, playerkey: string) => {
-  globalState[server][playerkey] = true
-  debug(`${playerkey}: warn on ${server}`)
-}
-
-// Mark a player as not needing to be warned
-const unwarnPlayer = (server: string, playerkey: string) => {
-  if (globalState[server][playerkey]) {
-    debug(`${playerkey}: unwarn on ${server}`)
-  }
-  delete globalState[server][playerkey]
-}
-
-// Is this a first offense ?
-const firstOffense = (server: string, playerkey: string) => {
-  return globalState[server][playerkey] == null
-}
+const globalState = config.servers.reduce<GlobalState>((acc, server) => {
+  acc[server] = []
+  return acc
+}, {})
 
 let timerHandle: any
+
+const rules: InvalidRules = {
+  rolesToForbid,
+  minLevel: config.minLevel,
+}
 
 async function check() {
   for (let i = 0; i < config.servers.length; ++i) {
     const server = config.servers[i]
 
-    globalState[server] = globalState[server] || {}
+    let needToWarn = false
+
+    const history = globalState[server]
 
     try {
       const infos = await fetchInfos(server, BASIC_AUTH_VALUE)
       const players = await extractPlayers(infos)
 
-      cleanState(server, players)
+      const currentState: ServerState = {
+        timestamp: Date.now(),
+        players,
+      }
 
       // Go through each player and check them
       for (let j = 0; j < players.length; ++j) {
         const player = players[j]
 
-        // Forbid some roles
-        if (rolesToForbid.indexOf(player.perk) !== -1) {
-          if (config.warnings && firstOffense(server, player.playerkey)) {
-            warnPlayer(server, player.playerkey)
+        if (playerIsInvalid(rules, player)) {
+          // If warnings mode is true
+          if (config.warnings) {
+            // And player has not been warned
+            if (!hasBeenWarned(rules, history[0], player)) {
+              debug('need to warn at true')
+              needToWarn = true
+            } else if (
+              !isWaitingToTakeAction(
+                rules,
+                config.warningPeriod,
+                history,
+                currentState,
+                player,
+              )
+            ) {
+              // Player has been warned and his grace period is over => action
+              await action(
+                server,
+                BASIC_AUTH_VALUE,
+                config.action,
+                player.playerkey,
+              )
+            } else {
+              debug('check if waiting')
+            }
           } else {
-            action(server, BASIC_AUTH_VALUE, config.action, player.playerkey)
+            // No warnings, just action
+            await action(
+              server,
+              BASIC_AUTH_VALUE,
+              config.action,
+              player.playerkey,
+            )
           }
-          continue
         }
-
-        // Forbid too low levels
-        if (player.level < config.minLevel) {
-          if (config.warnings && firstOffense(server, player.playerkey)) {
-            warnPlayer(server, player.playerkey)
-          } else {
-            action(server, BASIC_AUTH_VALUE, config.action, player.playerkey)
-          }
-          continue
-        }
-
-        unwarnPlayer(server, player.playerkey)
       }
 
-      // Warnings to issue ? Just issue one globally
-      if (Object.keys(globalState[server]).length > 0) {
+      if (needToWarn) {
         await adminSays(server, BASIC_AUTH_VALUE, config.warningMessage)
+      }
+
+      history.unshift(currentState)
+
+      // @TODO (sinewyk): compute necessary length
+      // between interval + warning duration
+      if (history.length > 10) {
+        history.pop()
       }
     } catch (e) {
       console.error(e)
@@ -131,7 +144,7 @@ async function check() {
   }
 
   // schedule next check
-  timerHandle = setTimeout(check, config.interval)
+  timerHandle = setTimeout(check, config.intervalCheck)
 }
 
 debug('starting ...')

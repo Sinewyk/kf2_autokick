@@ -1,11 +1,12 @@
 interface ConfigFile {
   servers: string[]
   basicAuthorization: string
-  interval: number
+  intervalCheck: number
   action: ACTIONS
   minLevel: number
   warnings: boolean
   warningMessage: string
+  warningPeriod: number
   removePerks: string[]
 }
 
@@ -37,10 +38,19 @@ enum ACTIONS {
 
 type PlayerKey = string
 
+// global state just keep track of previous server states
 interface GlobalState {
-  [serverAddress: string]: {
-    [playerkey: string]: boolean
-  }
+  [serverAddress: string]: ServerState[]
+}
+
+interface ServerState {
+  timestamp: number
+  players: PlayerInfos[]
+}
+
+interface InvalidRules {
+  rolesToForbid: string[]
+  minLevel: number
 }
 
 interface PlayerInfos {
@@ -49,4 +59,13 @@ interface PlayerInfos {
   level: number
 }
 
-export { ConfigFile, PERKS, ACTIONS, GlobalState, PlayerKey, PlayerInfos }
+export {
+  ConfigFile,
+  PERKS,
+  ACTIONS,
+  GlobalState,
+  PlayerKey,
+  ServerState,
+  PlayerInfos,
+  InvalidRules,
+}

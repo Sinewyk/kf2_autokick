@@ -2,7 +2,8 @@
   "name": "kf2_autokick",
   "version": "0.3.0",
   "scripts": {
-    "start": "node lib/index.js"
+    "start": "node lib/index.js",
+    "test": "jest src"
   },
   "dependencies": {
     "debug": "^3.1.0",
@@ -12,12 +13,23 @@
   },
   "devDependencies": {
     "@types/debug": "^0.0.30",
+    "@types/jest": "^22.0.1",
     "@types/node": "^9.3.0",
     "@types/superagent": "^3.5.6",
     "@types/x-ray": "^2.3.1",
     "@types/yargs": "^10.0.1",
+    "jest": "^22.1.4",
     "prettier": "^1.10.2",
+    "ts-jest": "^22.0.1",
     "typescript": "^2.6.2"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*)\\.ts$",
+    "coveragePathIgnorePatterns": ["(/__tests__/.*)\\.ts$"],
+    "moduleFileExtensions": ["ts", "js", "json"]
   },
   "prettier": {
     "singleQuote": true,

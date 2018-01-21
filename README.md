@@ -53,10 +53,11 @@ Run the daemon:
 interface ConfigFile {
   servers: string[]
   basicAuthorization: string
-  interval: number // in ms, defaults to 15000
+  intervalCheck: number // in ms, defaults to 5000
   action: string[] // one of 'kick', 'sessionban', 'banip' or 'banid', defaults to 'kick'
   minLevel: number // defaults to 15
   warnings: boolean // defaults to true
+  warningPeriod: number // defaults to 20000
   warningMessage: string // defaults to 'Minimum perk level required is 15. Change perk or be kicked.'
   removePerks: string[] // one of Berserker, Survivalist, Commando, Support, FieldMedic, Demolitionist, Firebug, Gunslinger, Sharpshooter or SWAT. Defaults to []
 }
@@ -68,10 +69,11 @@ Example:
 {
   "servers": ["http://127.0.0.1:8080"],
   "basicAuthorization": "foo:bar",
-  "interval": 5000,
+  "intervalCheck": 5000,
   "action": "sessionban",
   "minLevel": 24,
   "warnings": true,
+  "warningPeriod": 20000,
   "warningMessage":
     "Warning: change perk above 23, no survivalist, or get banned for the map",
   "removePerks": ["Survivalist"]
@@ -93,7 +95,5 @@ Autokick for people joining during a round without enough time to even go to the
 # Tech TODOS
 
 Clean server argument passing, try forEach over for loops (did for loops because async/await)
-
-Clean global state (immutable over mutation, redux ?)
 
 Maybe most + scan + proxy & shit
