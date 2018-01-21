@@ -1,3 +1,14 @@
+interface ConfigFile {
+  servers: string[]
+  basicAuthorization: string
+  interval: number
+  action: ACTIONS
+  minLevel: number
+  warnings: boolean
+  warningMessage: string
+  removePerks: string[]
+}
+
 // Ideally I would only support english, but I'm French
 // so some of my friends server are installed in French
 interface PERKS_Interface {
@@ -22,8 +33,6 @@ enum ACTIONS {
   SESSION_BAN = 'sessionban',
   BAN_IP = 'banip',
   BAN_ID = 'banid',
-  MUTE_VOICE = 'mutevoice',
-  UNMUTE_VOICE = 'unmutevoice',
 }
 
 type PlayerKey = string
@@ -40,4 +49,4 @@ interface PlayerInfos {
   level: number
 }
 
-export { PERKS, ACTIONS, GlobalState, PlayerKey, PlayerInfos }
+export { ConfigFile, PERKS, ACTIONS, GlobalState, PlayerKey, PlayerInfos }

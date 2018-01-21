@@ -8,13 +8,13 @@ This is just like a robot that is using your web admin panel to manage your serv
 
 I strongly suggest you run this on the same system where your killing floor 2 server is running so that you can use the loopback address and your credentials will be safe. Or proxy the web admin over https. But you're on your own if over http.
 
-Install [nodejs](https://nodejs.org)
+Install [nodejs](https://nodejs.org) (version 8+)
 
 Install [yarn](https://yarnpkg.com)
 
 Git clone this repo, go into it and run `yarn --frozen-lockfile` to install javascript dependencies
 
-Killing floor 2 server edits ([read the doc](https://wiki.tripwireinteractive.com/index.php?title=Dedicated_Server_%28Killing_Floor_2%29#Setting_Up_Web_Admin)):
+Killing floor 2 web admin server edits ([read the doc](https://wiki.tripwireinteractive.com/index.php?title=Dedicated_Server_%28Killing_Floor_2%29#Setting_Up_Web_Admin)):
 
 Activate http basic auth on your killing floor 2 web admin panel
 
@@ -39,33 +39,44 @@ Find the file `current_player_row.inc` in your Killing Floor 2 web admin folder 
 
 # Run
 
-Run the daemon it as
+Run the daemon:
 
-`node lib/index.js --servers http://1.2.3.4:8080,http://1.2.3.4:8081 --basic admin:123 [--no-warnings] [--warning-message="Fix your shit or get kicked"] [--minLevel=#] [--action=#] [--interval=timeIn_ms] [--remove-perks="Survivalist,SWAT"]`
+`node lib/index.js --config=./config.json`
 
 ### Mandatory parameters:
 
-`--servers`: comma separated list of servers, pointing to the web admin panel
+`--config`: path to JSON config file relative to working directory
 
-`--basic`: basic auth credentials in the format `login:password` of you web admin panel
+### Config file:
 
-### Optional parameters:
+```ts
+interface ConfigFile {
+  servers: string[]
+  basicAuthorization: string
+  interval: number // in ms, defaults to 15000
+  action: string[] // one of 'kick', 'sessionban', 'banip' or 'banid', defaults to 'kick'
+  minLevel: number // defaults to 15
+  warnings: boolean // defaults to true
+  warningMessage: string // defaults to 'Minimum perk level required is 15. Change perk or be kicked.'
+  removePerks: string[] // one of Berserker, Survivalist, Commando, Support, FieldMedic, Demolitionist, Firebug, Gunslinger, Sharpshooter or SWAT. Defaults to []
+}
+```
 
-`--min-level`: defaults to `15`
+Example:
 
-`--action`: defaults to `kick`. Available values: `kick`, `sessionban`, `banip`, `banid`, `mutevoice` and `unmutevoice`
-
-`--interval`: defaults to `15000`, in ms. How long between checks and actions
-
-`--no-warning`: by default we warn before doing the action ... use this option to not issue any warning before doing your action
-
-`--warning-message`: defaults to `No perks under level 15 : change or kick is imminent !`, but customize it related to the options you are sending
-
-You cannot use special characters because the `Content-Type` of the POST is `application/x-www-form-urlencoded`, so `&` breaks the parsing server side ... [more info here](https://en.wikipedia.org/wiki/Percent-encoding#The_application/x-www-form-urlencoded_type)
-
-`--remove-perks`: comma separated list of values ... possibles values are `Berserker`, `Survivalist`, `Commando`, `Support`, `FieldMedic`, `Demolitionist`, `Firebug`, `Gunslinger`, `Sharpshooter` and `SWAT`
-
-Example: `--remove-perks=Survivalist,Berserker`
+```json
+{
+  "servers": ["http://127.0.0.1:8080"],
+  "basicAuthorization": "foo:bar",
+  "interval": 5000,
+  "action": "sessionban",
+  "minLevel": 24,
+  "warnings": true,
+  "warningMessage":
+    "Warning: change perk above 23, no survivalist, or get banned for the map",
+  "removePerks": ["Survivalist"]
+}
+```
 
 # Requirements
 
