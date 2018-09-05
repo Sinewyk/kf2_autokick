@@ -8,32 +8,37 @@
   "dependencies": {
     "debug": "^3.1.0",
     "superagent": "^3.8.2",
-    "x-ray": "https://github.com/matthewmueller/x-ray",
+    "x-ray": "^2.3.3",
     "yargs": "^10.1.1"
   },
   "devDependencies": {
     "@types/debug": "^0.0.30",
-    "@types/jest": "^22.0.1",
-    "@types/node": "^9.3.0",
+    "@types/jest": "^23.3.1",
+    "@types/node": "^10.9.4",
     "@types/superagent": "^3.5.6",
     "@types/x-ray": "^2.3.1",
     "@types/yargs": "^10.0.1",
-    "jest": "^22.1.4",
+    "jest": "^23.5.0",
     "prettier": "^1.10.2",
-    "ts-jest": "^22.0.1",
-    "typescript": "^2.6.2"
+    "ts-jest": "^23.1.4",
+    "typescript": "^3.0.3"
   },
   "jest": {
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
     "testRegex": "(/__tests__/.*)\\.ts$",
-    "coveragePathIgnorePatterns": ["(/__tests__/.*)\\.ts$"],
-    "moduleFileExtensions": ["ts", "js", "json"]
+    "coveragePathIgnorePatterns": [
+      "(/__tests__/.*)\\.ts$"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json"
+    ]
   },
   "prettier": {
     "singleQuote": true,
-    "semi": false,
     "trailingComma": "all"
   }
 }
