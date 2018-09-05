@@ -12,7 +12,7 @@ Install [nodejs](https://nodejs.org) (version 8+)
 
 Install [yarn](https://yarnpkg.com)
 
-Git clone this repo, go into it and run `yarn --frozen-lockfile` to install javascript dependencies
+Git clone this repo, go into it and run `yarn --prod --frozen-lockfile` to install javascript dependencies
 
 Killing floor 2 web admin server edits ([read the doc](https://wiki.tripwireinteractive.com/index.php?title=Dedicated_Server_%28Killing_Floor_2%29#Setting_Up_Web_Admin)):
 
@@ -51,15 +51,15 @@ Run the daemon:
 
 ```ts
 interface ConfigFile {
-  servers: string[]
-  basicAuthorization: string
-  intervalCheck: number // in ms, defaults to 5000
-  action: string[] // one of 'kick', 'sessionban', 'banip' or 'banid', defaults to 'kick'
-  minLevel: number // defaults to 15
-  warnings: boolean // defaults to true
-  warningPeriod: number // defaults to 20000
-  warningMessage: string // defaults to 'Minimum perk level required is 15. Change perk or be kicked.'
-  removePerks: string[] // one of Berserker, Survivalist, Commando, Support, FieldMedic, Demolitionist, Firebug, Gunslinger, Sharpshooter or SWAT. Defaults to []
+  servers: string[];
+  basicAuthorization: string;
+  intervalCheck: number; // in ms, defaults to 5000
+  action: string[]; // one of 'kick', 'sessionban', 'banip' or 'banid', defaults to 'kick'
+  minLevel: number; // defaults to 15
+  warnings: boolean; // defaults to true
+  warningPeriod: number; // defaults to 20000
+  warningMessage: string; // defaults to 'Minimum perk level required is 15. Change perk or be kicked.'
+  removePerks: string[]; // one of Berserker, Survivalist, Commando, Support, FieldMedic, Demolitionist, Firebug, Gunslinger, Sharpshooter or SWAT. Defaults to []
 }
 ```
 
@@ -74,8 +74,7 @@ Example:
   "minLevel": 24,
   "warnings": true,
   "warningPeriod": 20000,
-  "warningMessage":
-    "Warning: change perk above 23, no survivalist, or get banned for the map",
+  "warningMessage": "Warning: change perk above 23, no survivalist, or get banned for the map",
   "removePerks": ["Survivalist"]
 }
 ```
@@ -94,6 +93,6 @@ Autokick for people joining during a round without enough time to even go to the
 
 # Tech TODOS
 
-Clean server argument passing, try forEach over for loops (did for loops because async/await)
+Clean server argument passing
 
 Maybe most + scan + proxy & shit

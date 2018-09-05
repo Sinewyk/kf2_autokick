@@ -1,10 +1,10 @@
-import { resolve } from 'path'
-import { argv } from 'yargs'
-import * as XRAY from 'x-ray'
-import * as _debug from 'debug'
-import defaultConfig from './defaultConfig'
-import { base64encode, validateConfigArgument, validateConfig } from './utils'
-import { adminSays, fetchInfos, action } from './api'
+import { resolve } from 'path';
+import { argv } from 'yargs';
+import * as XRAY from 'x-ray';
+import * as _debug from 'debug';
+import defaultConfig from './defaultConfig';
+import { base64encode, validateConfigArgument, validateConfig } from './utils';
+import { adminSays, fetchInfos, action } from './api';
 import {
   GlobalState,
   PlayerInfos,
@@ -12,90 +12,86 @@ import {
   ConfigFile,
   ServerState,
   InvalidRules,
-} from './interfaces'
-import { playerIsInvalid, hasBeenWarned, isWaitingToTakeAction } from './state'
+} from './interfaces';
+import { playerIsInvalid, hasBeenWarned, isWaitingToTakeAction } from './state';
 
-const debug = _debug('kf2autokick')
+const debug = _debug('kf2autokick');
 
-export { debug }
+export { debug };
 
 // Validate mandatory options
-validateConfigArgument(argv.config)
+validateConfigArgument(argv.config);
 
-const injectedConfig = require(resolve(process.cwd(), argv.config))
+const injectedConfig = require(resolve(process.cwd(), argv.config));
 
 const config: ConfigFile = {
   ...defaultConfig,
   ...injectedConfig,
-}
+};
 
-validateConfig(config)
+validateConfig(config);
 
 // i18n support
 // Admin Web panel sends back already translated perks name
 const rolesToForbid = config.removePerks.reduce<string[]>(
   (acc, perkToRemove: string) => acc.concat(PERKS[perkToRemove]),
   [],
-)
+);
 
-const BASIC_AUTH_VALUE = `Basic ${base64encode(config.basicAuthorization)}`
+const BASIC_AUTH_VALUE = `Basic ${base64encode(config.basicAuthorization)}`;
 
-const x = XRAY()
+const x = XRAY();
 
 const extractPlayers = (html: string): Promise<PlayerInfos[]> =>
   Promise.resolve(x(html, ['.foo-bar'])).then((players: string[]) =>
     players.map((player: string) => {
-      const splitPlayer: string[] = player.split(';')
+      const splitPlayer: string[] = player.split(';');
       return {
         perk: splitPlayer[0],
         // if there's no perk yet, user is still loading
         // mark level as 99 so that no warnings can be issued yet
         level: splitPlayer[0] === '' ? 99 : parseInt(splitPlayer[1], 10),
         playerkey: splitPlayer[2],
-      }
+      };
     }),
-  )
+  );
 
 const globalState = config.servers.reduce<GlobalState>((acc, server) => {
-  acc[server] = []
-  return acc
-}, {})
+  acc[server] = [];
+  return acc;
+}, {});
 
-let timerHandle: any
+let timerHandle: any;
 
 const rules: InvalidRules = {
   rolesToForbid,
   minLevel: config.minLevel,
-}
+};
 
 async function check() {
-  for (let i = 0; i < config.servers.length; ++i) {
-    const server = config.servers[i]
+  for (const server of config.servers) {
+    let needToWarn = false;
 
-    let needToWarn = false
-
-    const history = globalState[server]
+    const history = globalState[server];
 
     try {
-      const infos = await fetchInfos(server, BASIC_AUTH_VALUE)
-      const players = await extractPlayers(infos)
+      const infos = await fetchInfos(server, BASIC_AUTH_VALUE);
+      const players = await extractPlayers(infos);
 
       const currentState: ServerState = {
         timestamp: Date.now(),
         players,
-      }
+      };
 
       // Go through each player and check them
-      for (let j = 0; j < players.length; ++j) {
-        const player = players[j]
-
+      for (const player of players) {
         if (playerIsInvalid(rules, player)) {
           // If warnings mode is true
           if (config.warnings) {
             // And player has not been warned
             if (!hasBeenWarned(rules, history[0], player)) {
-              debug('need to warn at true')
-              needToWarn = true
+              debug('need to warn at true');
+              needToWarn = true;
             } else if (
               !isWaitingToTakeAction(
                 rules,
@@ -111,9 +107,9 @@ async function check() {
                 BASIC_AUTH_VALUE,
                 config.action,
                 player.playerkey,
-              )
+              );
             } else {
-              debug('check if waiting')
+              debug('check if waiting');
             }
           } else {
             // No warnings, just action
@@ -122,38 +118,38 @@ async function check() {
               BASIC_AUTH_VALUE,
               config.action,
               player.playerkey,
-            )
+            );
           }
         }
       }
 
       if (needToWarn) {
-        await adminSays(server, BASIC_AUTH_VALUE, config.warningMessage)
+        await adminSays(server, BASIC_AUTH_VALUE, config.warningMessage);
       }
 
-      history.unshift(currentState)
+      history.unshift(currentState);
 
       // @TODO (sinewyk): compute necessary length
       // between interval + warning duration
       if (history.length > 10) {
-        history.pop()
+        history.pop();
       }
     } catch (e) {
-      console.error(e)
+      console.error(e);
     }
   }
 
   // schedule next check
-  timerHandle = setTimeout(check, config.intervalCheck)
+  timerHandle = setTimeout(check, config.intervalCheck);
 }
 
-debug('starting ...')
-check()
+debug('starting ...');
+check();
 
 function handleExit() {
-  debug('closing ...')
-  clearTimeout(timerHandle)
+  debug('closing ...');
+  clearTimeout(timerHandle);
 }
 
-process.once('SIGINT', handleExit)
-process.once('SIGTERM', handleExit)
+process.once('SIGINT', handleExit);
+process.once('SIGTERM', handleExit);
