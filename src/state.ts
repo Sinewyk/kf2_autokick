@@ -1,5 +1,4 @@
 import { ServerState, PlayerInfos, InvalidRules } from './interfaces'
-import { debug } from './index'
 
 const playerIsInvalid = (
   config: InvalidRules,
