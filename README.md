@@ -51,15 +51,16 @@ Run the daemon:
 
 ```ts
 interface ConfigFile {
-  servers: string[];
-  basicAuthorization: string;
-  intervalCheck: number; // in ms, defaults to 5000
-  action: string[]; // one of 'kick', 'sessionban', 'banip' or 'banid', defaults to 'kick'
-  minLevel: number; // defaults to 15
-  warnings: boolean; // defaults to true
-  warningPeriod: number; // defaults to 20000
-  warningMessage: string; // defaults to 'Minimum perk level required is 15. Change perk or be kicked.'
-  removePerks: string[]; // one of Berserker, Survivalist, Commando, Support, FieldMedic, Demolitionist, Firebug, Gunslinger, Sharpshooter or SWAT. Defaults to []
+	servers: string[];
+	basicAuthorization: string;
+	intervalCheck: number; // in ms, defaults to 5000
+	action: string[]; // one of 'kick', 'sessionban', 'banip' or 'banid', defaults to 'kick'
+	minLevel: number; // defaults to 15
+	warnings: boolean; // defaults to true
+	warningPeriod: number; // defaults to 20000
+	warningMessage: string; // defaults to 'Minimum perk level required is 15. Change perk or be kicked.'
+	removePerks: string[]; // one of Berserker, Survivalist, Commando, Support, FieldMedic, Demolitionist, Firebug, Gunslinger, Sharpshooter or SWAT. Defaults to []
+	log: boolean; // defaults to false, do you want to log some basic logging ? start/stop/actions
 }
 ```
 
@@ -67,15 +68,16 @@ Example:
 
 ```json
 {
-  "servers": ["http://127.0.0.1:8080"],
-  "basicAuthorization": "foo:bar",
-  "intervalCheck": 5000,
-  "action": "sessionban",
-  "minLevel": 24,
-  "warnings": true,
-  "warningPeriod": 20000,
-  "warningMessage": "Warning: change perk above 23, no survivalist, or get banned for the map",
-  "removePerks": ["Survivalist"]
+	"servers": ["http://127.0.0.1:8080"],
+	"basicAuthorization": "foo:bar",
+	"intervalCheck": 5000,
+	"action": "sessionban",
+	"minLevel": 24,
+	"warnings": true,
+	"warningPeriod": 20000,
+	"warningMessage": "Warning: change perk above 23, no survivalist, or get banned for the map",
+	"removePerks": ["Survivalist"],
+	"log": true
 }
 ```
 
